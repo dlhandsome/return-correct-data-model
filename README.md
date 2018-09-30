@@ -1,4 +1,4 @@
-# return correct-data-model
+# return-correct-data-model
 [![Build Status](https://travis-ci.com/dlhandsome/return-correct-data-model.svg?branch=master)](https://travis-ci.com/dlhandsome/return-correct-data-model)
 [![npm-version](https://img.shields.io/npm/v/rcdm.svg)](https://www.npmjs.com/package/rcdm)
 
