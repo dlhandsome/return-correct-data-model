@@ -1,4 +1,7 @@
 # return correct-data-model
+[![Build Status](https://travis-ci.com/dlhandsome/return-correct-data-model.svg?branch=master)](https://travis-ci.com/dlhandsome/return-correct-data-model)
+[![npm-version](https://img.shields.io/npm/v/rcdm.svg)](https://www.npmjs.com/package/rcdm)
+
 Define your own models & returns the correct data structure.
 
 If we rely on the data provided in a sandbox environment, this is very dangerous. We don't know if it returns an elephant or a mouse, but in fact we need a horse. But we can use this library to pre-define the data structures we expect and to ensure reliable results.
