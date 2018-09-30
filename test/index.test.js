@@ -1,6 +1,6 @@
 const {
   defineModel
-} = require('../src/index')
+} = require('../dist/rcdm')
 
 const {
   isFunc
