@@ -1,54 +1,114 @@
-<div align="center">
-  <a><img src="https://user-images.githubusercontent.com/16918885/36141718-c95db0b6-10e0-11e8-8936-72b7b03d04bb.png" /></a>
-<br>
-<br>
+# return correct-data-model
+Define your own models & returns the correct data structure.
 
-[![travis-ci](https://travis-ci.org/we-plugin/we-cropper.svg?branch=master)](https://www.travis-ci.org/we-plugin/we-cropper)
-[![npm-version](https://img.shields.io/npm/v/we-cropper.svg)](https://www.npmjs.com/package/we-cropper)
-<h1>we-cropper</h1>
-<p>一款灵活小巧的canvas图片裁剪器 <a href="https://unpkg.com/we-cropper@1.2.0/docs/assets/online.jpg">在线体验</a></p>
-</div>
+If we rely on the data provided in a sandbox environment, this is very dangerous. We don't know if it returns an elephant or a mouse, but in fact we need a horse. But we can use this library to pre-define the data structures we expect and to ensure reliable results.
 
-<h2 align="center"> Usage</h2>
-
-原生小程序不支持npm引入第三方库，可将本项目克隆至本地再做进一步处理
-
+### Usage
 ```bash
-git clone https://github.com/we-plugin/we-cropper.git
-```
-we-cropper保留了npm的引入方式，搭配第三方脚手架/框架可采用npm方式引入
-
-```bash
-npm install we-cropper --save
+npm i rcdm -S
 ```
 
-<h2 align="center">Links</h2>
+### Example
+```javascript
+import { defineModel } from 'rcdm'
 
-- [文档 · Document](https://we-plugin.github.io/we-cropper/#/)
+// define your own models
+const people = defineModel({
+  name: String,
+  age: { type: Number, default: 18 }
+})
 
-- [变更 · ChangeLog](https://we-plugin.github.io/we-cropper/#/changelog)
+const company = defineModel({
+  list: { type: Array, extend: people }
+})
 
-- [示例 · Example](https://github.com/we-plugin/we-cropper/tree/master/example)
+// return the data you expected
+const p0 = people() // => { name: '', age: 18 }
+const p1 = people({ name: 'Tony', age: '19' }) // => { name: 'Tony', age: 19 }
+const p2 = people({ name: 'Tom', age: '20a' }) // => { name: 'Tom', age: 18 }
 
-- [开源协议 · The MIT License](http://opensource.org/licenses/MIT)
+const c0 = company() // => { list: [] }
+const c1 = company({ list: [{}] }) // => { list: [{ name: '', age: 18 }] }
+const c2 = company({ list: [{ name: 'Tony', age: '19' }] }) // => { list: [{ name: 'Tony', age: 19 }] }
+```
 
-- [在WePY框架中实现“自定义组件”](https://github.com/we-plugin/we-cropper/wiki/%E5%9C%A8WePY%E4%B8%AD%E5%AE%9E%E7%8E%B0%E2%80%9C%E8%87%AA%E5%AE%9A%E4%B9%89%E8%A3%81%E5%89%AA%E7%BB%84%E4%BB%B6%E2%80%9D)
+### Why i write it
 
-- [在mpvue中实现“自定义裁剪组件”](https://github.com/we-plugin/we-cropper/tree/master/packages/mpvue-cropper)
+As a front-end engineer, I often have to tune some data with the back-end engineer. In order to transmit the correct data, we often write some ugly code.
 
-- [常见问题 · FAQ](https://github.com/we-plugin/we-cropper/wiki/FAQ)
+```javascript
+fetch('/api', {
+  id: Number(id),
+  list: list || []
+})
+```
 
-<h2 align="center">Contributing</h2>
+Sometimes a request field for a data interface depends on the return value of another data interface, but I can't guarantee that the previous data interface returns the correct data structure
 
+```javascript
+let id = sth.id
+let list = sth.list
+
+const result1 = await fetch('/api/foo', {
+  id: id && !isNaN(Number(id)) && Number(id) || DEFAULT_ID,
+  list: list || []
+})
+
+const params = result1.data
+
+const result2 = await fetch('/api/bar', {
+  id: params && params.id && !isNaN(Number(params.id)) && Number(params.id) || DEFAULT_ID,
+})
+
+```
+
+and now, after using ```rcdm```
+
+- ```def.js```
+
+```javascript
+const { defineModel } = require('rcdm')
+
+export const foo = defineModel({
+ id: Number,
+ list: Array
+})
+
+export const bar = defineModel({
+  id: Number
+})
+
+```
+
+- ```page.js```
+
+```javascript
+import { foo, bar } from './def'
+
+let id = sth.id
+let list = sth.list
+
+const result1 = await fetch('/api/foo', foo({
+  id,
+  list
+}))
+
+const params = result1.data
+
+const result2 = await fetch('/api/bar', bar({
+  id: params.id
+}))
+```
+
+### Contributing
 ```bash
 # step 01
-git clone https://github.com/we-plugin/we-cropper.git
+git clone https://github.com/dlhandsome/return-correct-data-model.git
 # step 02
 npm install
 #step 03
 npm run dev
 ```
-欢迎任意形式的贡献
 
-<h2 align="center">Thanks</h2>
-@夏左左
+### License
+The MIT License
